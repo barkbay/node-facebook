@@ -250,7 +250,7 @@ function receivedMessage(event) {
 
   request.on('response', function(response) {
     console.log(response);
-    sendTextMessage(senderID, response.result.fullfillment.speech);
+    sendTextMessage(senderID, response.result.fulfillment.speech);
   });
   
   request.on('error', function(error) {
