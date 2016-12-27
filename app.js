@@ -16,13 +16,19 @@ const
   crypto = require('crypto'),
   express = require('express'),
   https = require('https'),  
-  request = require('request');
+  request = require('request'),
+  apiai = require('apiai');
 
 var app = express();
 app.set('port', process.env.PORT || 5000);
 app.set('view engine', 'ejs');
 app.use(bodyParser.json({ verify: verifyRequestSignature }));
 app.use(express.static('public'));
+
+
+const API_AI_CLIENT_TOKEN = (process.env.API_AI_CLIENT_TOKEN) ? 
+  process.env.API_AI_CLIENT_TOKEN :
+  config.get('apiAiToken');
 
 /*
  * Be sure to setup your config values before running this code. You can 
@@ -235,6 +241,23 @@ function receivedMessage(event) {
   var messageText = message.text;
   var messageAttachments = message.attachments;
   var quickReply = message.quick_reply;
+
+  // Call API.AI
+  var apiai = apiai(API_AI_CLIENT_TOKEN);
+  var request = app.textRequest(message.text, {
+    sessionId: senderID
+  });
+
+  request.on('response', function(response) {
+    console.log(response);
+    sendTextMessage(senderID, response);
+  });
+  
+  request.on('error', function(error) {
+    console.log(error);
+  });
+ 
+  request.end();
 
   if (isEcho) {
     // Just logging message echoes to console
