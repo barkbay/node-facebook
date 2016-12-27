@@ -25,6 +25,8 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.json({ verify: verifyRequestSignature }));
 app.use(express.static('public'));
 
+var apiai = apiai(API_AI_CLIENT_TOKEN);
+
 
 const API_AI_CLIENT_TOKEN = (process.env.API_AI_CLIENT_TOKEN) ? 
   process.env.API_AI_CLIENT_TOKEN :
@@ -243,7 +245,6 @@ function receivedMessage(event) {
   var quickReply = message.quick_reply;
 
   // Call API.AI
-  var apiai = apiai(API_AI_CLIENT_TOKEN);
   var request = app.textRequest(message.text, {
     sessionId: senderID
   });
